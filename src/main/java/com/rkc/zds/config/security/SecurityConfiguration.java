@@ -57,8 +57,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private AuthenticationService authenticationService;
 
-	@Autowired
-	private HmacRequester hmacRequester;
+	//@Autowired
+	//private HmacRequester hmacRequester;
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
