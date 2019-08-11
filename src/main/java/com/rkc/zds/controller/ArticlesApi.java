@@ -10,7 +10,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rkc.zds.api.exception.InvalidRequestException;
 import com.rkc.zds.dto.ArticleDto;
 import com.rkc.zds.dto.ContactDto;
+import com.rkc.zds.dto.GroupMemberDto;
+import com.rkc.zds.dto.GroupMemberElementDto;
 import com.rkc.zds.dto.UserDto;
+import com.rkc.zds.model.ArticleData;
+import com.rkc.zds.model.ArticleDataList;
 import com.rkc.zds.repository.ArticleRepository;
 import com.rkc.zds.repository.UserRepository;
 import com.rkc.zds.service.ArticleQueryService;
@@ -20,6 +24,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -39,10 +44,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin(origins = "http://www.zdslogic-development.com:4200")
@@ -111,7 +118,7 @@ public class ArticlesApi {
 				}
 			});
 		}
-		
+
 		return ResponseEntity.ok(HttpStatus.NO_CONTENT);
 	}
 
@@ -124,10 +131,10 @@ public class ArticlesApi {
 		String userLogin = authentication.getName();
 
 		Optional<UserDto> userDto = userRepository.findByUserName(userLogin);
-		
+
 		UserDto user = null;
-		
-		if(userDto.isPresent()) {
+
+		if (userDto.isPresent()) {
 			user = userDto.get();
 		}
 
@@ -136,29 +143,56 @@ public class ArticlesApi {
 
 	// @GetMapping
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity getArticles(Pageable pageable, @RequestParam(value = "offset", defaultValue = "0") int offset,
+	public ResponseEntity<Page<ArticleData>> getArticles(Pageable pageable, @RequestParam(value = "offset", defaultValue = "0") int offset,
 			@RequestParam(value = "limit", defaultValue = "20") int limit,
 			@RequestParam(value = "tag", required = false) String tag,
 			@RequestParam(value = "favorited", required = false) String favoritedBy,
-			@RequestParam(value = "author", required = false) String author, @AuthenticationPrincipal UserDto user) {
+			@RequestParam(value = "author", required = false) String author) {
 
-		/*
-		 * Authentication authentication =
-		 * SecurityContextHolder.getContext().getAuthentication();
-		 * 
-		 * String userLogin = authentication.getName();
-		 * 
-		 * UserDto userDto = userRepository.findByUserName(userLogin);
-		 */
-		UserDto userDto = null;
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC,
-				"createdAt");
+		String userLogin = authentication.getName();
 
-		return ResponseEntity
-				.ok(articleQueryService.findRecentArticles(pageOptions, tag, author, favoritedBy, userDto));
+		Optional<UserDto> userDto = userRepository.findByUserName(userLogin);
+
+		UserDto user = null;
+
+		if (userDto.isPresent()) {
+			user = userDto.get();
+		}
+
+		//Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), limit, Sort.Direction.DESC, "createdAt");
+		Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+
+		Page<ArticleDto> articlesPage = articleQueryService.findArticles(pageable, tag, author, favoritedBy, user);
+
+		ArticleDataList list = articleQueryService.findRecentArticles(pageOptions, tag, author, favoritedBy, user);
+/*
+		for(ArticleData element:list.) {
+			
+		}
+*/		
+		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
+		PageImpl<ArticleData> page = new PageImpl<ArticleData>(list.getList(), pageRequest,
+				articlesPage.getTotalElements());
+
+		return new ResponseEntity<>(page, HttpStatus.OK);
+
+		//return ResponseEntity
+		//		.ok(articleQueryService.findRecentArticles(pageOptions, tag, author, favoritedBy, userDto));
 	}
+	/*
+	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Page<ArticleDto>> findAllArticles(Pageable pageable, HttpServletRequest req) {
+		Page<ArticleDto> page = articleQueryService.findArticles(pageable);
+		ResponseEntity<Page<ArticleDto>> response = new ResponseEntity<>(page, HttpStatus.OK);
+		return response;
+	}
+	*/
 }
+
 /*
  * @Getter
  * 

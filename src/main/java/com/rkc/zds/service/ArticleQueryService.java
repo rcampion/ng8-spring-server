@@ -3,6 +3,7 @@ package com.rkc.zds.service;
 import com.rkc.zds.model.ArticleData;
 import com.rkc.zds.model.ArticleDataList;
 import com.rkc.zds.model.ArticleFavoriteCount;
+import com.rkc.zds.dto.ArticleDto;
 import com.rkc.zds.dto.UserDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -149,5 +151,22 @@ public class ArticleQueryService {
 			int count = articleReadService.countFeedSize(followedUsers);
 			return new ArticleDataList(articles, count);
 		}
+	}
+
+	public Page<ArticleDto> findArticles(Pageable pageable, String tag, String author, String favoritedBy, UserDto userDto) {
+/*		List<String> articleIds = articleReadService.queryArticles(pageable, tag, author, favoritedBy);
+		// int articleCount = articleReadService.countArticle(tag, author, favoritedBy);
+		int articleCount = articleIds.size();
+		if (articleIds.size() == 0) {
+			return new ArticleDataList(new ArrayList<>(), articleCount);
+		} else {
+			List<ArticleData> articles = articleReadService.findArticles(pageable, articleIds);
+			fillExtraInfo(articles, currentUser);
+			return new ArticleDataList(articles, articleCount);
+		}
+
+*/		
+		
+		return articleReadService.findAll(pageable);
 	}
 }
