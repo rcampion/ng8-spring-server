@@ -163,7 +163,9 @@ public class ArticlesApi {
 		}
 
 		//Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), limit, Sort.Direction.DESC, "createdAt");
-		Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+		//Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+		
+		Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 
 		Page<ArticleDto> articlesPage = articleQueryService.findArticles(pageable, tag, author, favoritedBy, user);
 
