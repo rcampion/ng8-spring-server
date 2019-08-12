@@ -69,8 +69,7 @@ public class ArticleApi {
 		this.articleQueryService = articleQueryService;
 		this.articleRepository = articleRepository;
 	}
-	//@RequestMapping(path = "/api/articles/{slug}")
-	//@GetMapping
+
 	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> article(@PathVariable("id") Integer id) {
 
@@ -86,7 +85,6 @@ public class ArticleApi {
 			user = userDto.get();
 		}
 
-//		return articleQueryService.findBySlug(slug, userDto)
 		return articleQueryService.findById(id, user)
 				.map(articleData -> ResponseEntity.ok(articleResponse(articleData)))
 				.orElseThrow(ResourceNotFoundException::new);

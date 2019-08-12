@@ -145,6 +145,8 @@ public class ArticlesApi {
 			
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
+		int size = list.getList().size();
+		
 		PageImpl<ArticleData> page = new PageImpl<ArticleData>(list.getList(), pageRequest,
 				list.getList().size());
 
