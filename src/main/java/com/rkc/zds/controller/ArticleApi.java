@@ -61,7 +61,9 @@ public class ArticleApi {
 	@Autowired
 	ArticleTagArticleRepository tagArticleRepository;
 	
+	@Autowired	
 	private ArticleQueryService articleQueryService;
+	
 	private ArticleRepository articleRepository;
 
 	@Autowired
