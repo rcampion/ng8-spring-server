@@ -141,20 +141,15 @@ public class ArticlesApi {
 			user = userDto.get();
 		}
 
-		Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
-
 		ArticleDataList list = articleQueryService.findUserFeed(pageable, user);
-		
-		Page<ArticleDto> articlesPage = articleQueryService.findArticles(pageable, tag, author, favoritedBy, user);
-		
+			
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
 		PageImpl<ArticleData> page = new PageImpl<ArticleData>(list.getList(), pageRequest,
-				articlesPage.getTotalElements());
+				list.getList().size());
 
 		return new ResponseEntity<>(page, HttpStatus.OK);
-		
-		
+				
 	}
 
 	// @GetMapping
@@ -180,14 +175,12 @@ public class ArticlesApi {
 
 		Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 
-		Page<ArticleDto> articlesPage = articleQueryService.findArticles(pageable, tag, author, favoritedBy, user);
-
 		ArticleDataList list = articleQueryService.findRecentArticles(pageOptions, tag, author, favoritedBy, user);
 		
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
 		PageImpl<ArticleData> page = new PageImpl<ArticleData>(list.getList(), pageRequest,
-				articlesPage.getTotalElements());
+				list.getList().size());
 
 		return new ResponseEntity<>(page, HttpStatus.OK);
 
