@@ -178,19 +178,12 @@ public class ArticlesApi {
 			user = userDto.get();
 		}
 
-		//Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), limit, Sort.Direction.DESC, "createdAt");
-		//Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
-		
 		Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 
 		Page<ArticleDto> articlesPage = articleQueryService.findArticles(pageable, tag, author, favoritedBy, user);
 
 		ArticleDataList list = articleQueryService.findRecentArticles(pageOptions, tag, author, favoritedBy, user);
-/*
-		for(ArticleData element:list.) {
-			
-		}
-*/		
+		
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
 		PageImpl<ArticleData> page = new PageImpl<ArticleData>(list.getList(), pageRequest,
@@ -198,17 +191,8 @@ public class ArticlesApi {
 
 		return new ResponseEntity<>(page, HttpStatus.OK);
 
-		//return ResponseEntity
-		//		.ok(articleQueryService.findRecentArticles(pageOptions, tag, author, favoritedBy, userDto));
 	}
-	/*
-	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Page<ArticleDto>> findAllArticles(Pageable pageable, HttpServletRequest req) {
-		Page<ArticleDto> page = articleQueryService.findArticles(pageable);
-		ResponseEntity<Page<ArticleDto>> response = new ResponseEntity<>(page, HttpStatus.OK);
-		return response;
-	}
-	*/
+
 }
 
 /*
