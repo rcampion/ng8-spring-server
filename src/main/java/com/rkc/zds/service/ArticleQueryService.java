@@ -146,10 +146,10 @@ public class ArticleQueryService {
 		if (followedUsers.size() == 0) {
 			return new ArticleDataList(new ArrayList<>(), 0);
 		} else {
-			List<ArticleData> articles = articleReadService.findArticlesOfAuthors(pageable, followedUsers);
-			fillExtraInfo(articles, user);
-			int count = articleReadService.countFeedSize(followedUsers);
-			return new ArticleDataList(articles, count);
+			ArticleDataList articles = articleReadService.findArticlesOfAuthors(pageable, followedUsers);
+			fillExtraInfo(articles.getList(), user);
+			//int count = articleReadService.countFeedSize(followedUsers);
+			return new ArticleDataList(articles.getList(), articles.getCount());
 		}
 	}
 
